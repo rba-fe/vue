@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+  <div id="app">
+  </div>
+  <script>
+    // <a target="_blank" :href='src'><span>点击进入途家网</span></a>
+  // var demo = new Vue({
+  //     el: '#app',
+  //     template: `
+  //   <div class='div-class'>
+  //       我是最普通的文本
+  //       <p>{{msg}}</p>
+  //       <a target="_blank" :href='src'>点击进入途家网</a>
+  //   </div>`,
+  //     data: {
+  //       msg: 'bilibili',
+  //       src: 'https://www.tujia.com'
+  //     }
+  //   })
+  var demo = new Vue({
+      el: '#app',
+      template: 
+    `<div class='div-class' ass='s'>我是最普通的文本<p>{{msg}}</p><a target="_blank" :href='src'>点击进入途家网</a></div>`,
+      data: {
+        msg: 'bilibili',
+        src: 'https://www.tujia.com'
+      }
+    })
+  </script>
+</body>
+</html>
