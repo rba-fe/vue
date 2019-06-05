@@ -57,6 +57,7 @@ export function initState (vm: Component) {
   }
   if (opts.computed) initComputed(vm, opts.computed)
   if (opts.watch && opts.watch !== nativeWatch) {
+    console.log('init watch')
     initWatch(vm, opts.watch)
   }
 }
@@ -317,6 +318,7 @@ function createWatcher (
 }
 
 export function stateMixin (Vue: Class<Component>) {
+  console.log('进入state')
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
@@ -347,6 +349,7 @@ export function stateMixin (Vue: Class<Component>) {
     cb: any,
     options?: Object
   ): Function {
+    console.log('进入$watch')
     const vm: Component = this
     if (isPlainObject(cb)) {
       return createWatcher(vm, expOrFn, cb, options)
@@ -365,4 +368,5 @@ export function stateMixin (Vue: Class<Component>) {
       watcher.teardown()
     }
   }
+  console.log('进入state end')
 }

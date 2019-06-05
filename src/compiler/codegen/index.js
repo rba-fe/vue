@@ -67,8 +67,9 @@ export function generate (
   options: CompilerOptions
 ): CodegenResult {
   const state = new CodegenState(options)
-  console.log(state,70)
   const code = ast ? genElement(ast, state) : '_c("div")'
+  console.log(state,70)
+  console.log(code, 72)
   return {
     render: `with(this){return ${code}}`,
     staticRenderFns: state.staticRenderFns
@@ -78,7 +79,7 @@ export function generate (
 export function genElement (el: ASTElement, state: CodegenState): string {
   console.log(el,79)
   if (el.parent) {
-    el.pre = el.pre || el.parent.pre
+    el.pre = el.pre || el.parent.pre  //v-pre
   }
   //如果该节点是个静态子树，我们就执行genStatic对其进行处理。
   if (el.staticRoot && !el.staticProcessed) {

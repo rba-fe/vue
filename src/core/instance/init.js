@@ -13,11 +13,12 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  console.log('进入init')
   Vue.prototype._init = function (options?: Object) {
+    console.log('进入_init')
     const vm: Component = this
     // a uid
     vm._uid = uid++
-
     let startTag, endTag
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -66,9 +67,13 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     if (vm.$options.el) {
+      console.log('$mount')
       vm.$mount(vm.$options.el)
+      console.log('$mount end')
     }
+    console.log('进入_init end')
   }
+  console.log('进入init end')
 }
 
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {

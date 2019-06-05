@@ -28,10 +28,22 @@
   var demo = new Vue({
       el: '#app',
       template: 
-    `<div class='div-class' ass='s'>我是最普通的文本<p>{{msg}}</p><a target="_blank" :href='src'>点击进入途家网</a></div>`,
+    `<div class='div-class' ass='s'>我是最普通的文本<p>{{msg}}</p><a target="_blank" :href='src'>点击进入途家网</a>
+      <div>嗖嗖啊<span>ssss<i>ssssss</i></span></div>
+      </div>`,
       data: {
         msg: 'bilibili11',
         src: 'https://www.tujia.com/aaa/aaa'
+      },
+      methods:{
+        click(){
+          this.msg=this.msg+ parseInt(Math.random()*10,10)
+        }
+      },
+      watch:{
+        msg(val){
+          console.log(val)
+        }
       }
     })
   </script>

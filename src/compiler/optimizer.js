@@ -39,7 +39,7 @@ export function optimize (root: ?ASTElement, options: CompilerOptions) {
   markStatic(root)
   // second pass: mark static roots.  标记静态子树
   markStaticRoots(root, false)
-  // console.log(root,420)
+  console.log(root,420)
 }
 
 function genStaticKeys (keys: string): Function {

@@ -56,6 +56,7 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  console.log('进入生命周期')
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -136,6 +137,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
       vm.$vnode.parent = null
     }
   }
+  console.log('进入生命周期 end')
 }
 
 export function mountComponent (
