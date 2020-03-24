@@ -91,7 +91,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
     // turn code into functions
     const res = {}
     const fnGenErrors = []
-    console.log(compiled.render,112)
+    console.log(compiled.render,'还是字符串')
     res.render = createFunction(compiled.render, fnGenErrors)
     console.log(res.render,111)
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
