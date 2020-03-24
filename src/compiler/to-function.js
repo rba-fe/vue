@@ -93,7 +93,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
     const fnGenErrors = []
     console.log(compiled.render,'还是字符串')
     res.render = createFunction(compiled.render, fnGenErrors)
-    console.log(res.render,111)
+    console.log(res.render,'变成函数')
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
       return createFunction(code, fnGenErrors)
     })
