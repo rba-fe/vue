@@ -26,8 +26,7 @@ step 2 ：将AST进行静态优化
 
 step 3 ：由AST生成render
 */
-
-export const createCompiler = createCompilerCreator(function baseCompile (
+ const createCompiler = createCompilerCreator(function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
@@ -35,11 +34,15 @@ export const createCompiler = createCompilerCreator(function baseCompile (
    // 编译转化为ast
    console.log(template,789)
   const ast = parse(template.trim(), options)
-  console.log(ast,1000)
+  console.log(Object.assign({},ast),1000)
+
     // 优化 ast
   if (options.optimize !== false) {
+    console.log('ast优化')
     optimize(ast, options)
+    console.log(Object.assign({},ast),1001)
   }
+
   // ast 生成render
   const code = generate(ast, options)
   // console.log(code,7890)
@@ -54,6 +57,8 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   _t slot节点
 
   */
+ console.log(code,555)
+ console.log(typeof code.render,55)
  console.log(code.render,55)
   return {
     ast,
@@ -61,3 +66,4 @@ export const createCompiler = createCompilerCreator(function baseCompile (
     staticRenderFns: code.staticRenderFns
   }
 })
+export {createCompiler}

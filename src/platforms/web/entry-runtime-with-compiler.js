@@ -8,7 +8,6 @@ import Vue from './runtime/index'
 import { query } from './util/index'
 import { compileToFunctions } from './compiler/index'
 import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat'
-
 const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
