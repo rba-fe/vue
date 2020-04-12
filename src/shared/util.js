@@ -277,7 +277,6 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
     return keys.concat(m.staticKeys || [])
   }, []).join(',')
 }
-
 /**
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?

@@ -2,8 +2,9 @@
 
 import { cached } from 'shared/util'
 import { parseFilters } from './filter-parser'
-
+// 默认分隔符{{ }}
 const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g
+// 判断特殊字符作为分隔符
 const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g
 
 const buildRegex = cached(delimiters => {
@@ -16,7 +17,7 @@ type TextParseResult = {
   expression: string,
   tokens: Array<string | { '@binding': string }>
 }
-
+// 去解析  {{}}
 export function parseText (
   text: string,
   delimiters?: [string, string]

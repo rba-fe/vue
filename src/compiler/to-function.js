@@ -4,6 +4,7 @@ import { noop, extend } from 'shared/util'
 import { warn as baseWarn, tip } from 'core/util/debug'
 import { generateCodeFrame } from './codeframe'
 
+//结构没了 ast 抽象语法树
 type CompiledFunctionResult = {
   render: Function;
   staticRenderFns: Array<Function>;
@@ -91,6 +92,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
     const res = {}
     const fnGenErrors = []
     res.render = createFunction(compiled.render, fnGenErrors)
+    console.log(res.render,111)
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
       return createFunction(code, fnGenErrors)
     })

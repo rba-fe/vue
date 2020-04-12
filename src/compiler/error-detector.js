@@ -6,21 +6,26 @@ type Range = { start?: number, end?: number };
 
 // these keywords should not appear inside expressions, but operators like
 // typeof, instanceof and in are allowed
+//这些关键字不应该出现在表达式中，而是运算符
+//允许使用typeof，instanceof和in
+
 const prohibitedKeywordRE = new RegExp('\\b' + (
   'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
   'super,throw,while,yield,delete,export,import,return,switch,default,' +
   'extends,finally,continue,debugger,function,arguments'
 ).split(',').join('\\b|\\b') + '\\b')
-
 // these unary operators should not be used as property/method names
+// 这些一元运算符不应该用作属性/方法名称
 const unaryOperatorsRE = new RegExp('\\b' + (
   'delete,typeof,void'
 ).split(',').join('\\s*\\([^\\)]*\\)|\\b') + '\\s*\\([^\\)]*\\)')
 
 // strip strings in expressions
+//表达式中的字符串
 const stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|\}(?:[^`\\]|\\.)*`|`(?:[^`\\]|\\.)*`/g
 
 // detect problematic expressions in a template
+//检测模板中有问题的表达式
 export function detectErrors (ast: ?ASTNode, warn: Function) {
   if (ast) {
     checkNode(ast, warn)

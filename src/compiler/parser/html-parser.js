@@ -14,6 +14,31 @@ import { isNonPhrasingTag } from 'web/compiler/util'
 import { unicodeRegExp } from 'core/util/lang'
 
 // Regular Expressions for parsing tags and attributes
+/*
+// 标准命名规范
+const ncname = '[a-zA-Z_][\\w\\-\\.]*'
+
+// 捕获整体内容
+const qnameCapture = `((?:${ncname}\\:)?${ncname})`
+
+// 开始标签开头
+const startTagOpen = new RegExp(`^<${qnameCapture}`)
+
+// 开始标签结尾
+const startTagClose = /^\s*(\/?)>/
+
+// 结束标签
+const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
+
+// DOCTYPE
+const doctype = /^<!DOCTYPE [^>]+>/i
+
+// 注释 <!--
+const comment = /^<!--/
+
+// <![CDATA
+const conditionalComment = /^<!\[/
+  */
 const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/
 const dynamicArgAttribute = /^\s*((?:v-[\w-]+:|@|:|#)\[[^=]+\][^\s"'<>\/=]*)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/
 const ncname = `[a-zA-Z_][\\-\\.0-9_a-zA-Z${unicodeRegExp.source}]*`
@@ -58,16 +83,22 @@ export function parseHTML (html, options) {
   const canBeLeftOpenTag = options.canBeLeftOpenTag || no
   let index = 0
   let last, lastTag
+  console.log(html,86)
   while (html) {
     last = html
     // Make sure we're not in a plaintext content element like script/style
     if (!lastTag || !isPlainTextElement(lastTag)) {
+      // < 是不是第一个位置出现的
       let textEnd = html.indexOf('<')
       if (textEnd === 0) {
+        console.log(html,94)
+        console.log(`textEnd=${textEnd}，表示我是开头`,95)
         // Comment:
         if (comment.test(html)) {
+          
           const commentEnd = html.indexOf('-->')
-
+          //   <!-- --> 注释的情况 
+          // 3= -->的长度
           if (commentEnd >= 0) {
             if (options.shouldKeepComment) {
               options.comment(html.substring(4, commentEnd), index, index + commentEnd + 3)
@@ -76,7 +107,7 @@ export function parseHTML (html, options) {
             continue
           }
         }
-
+        // 过滤<![   ]>注释的内容
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
@@ -88,6 +119,7 @@ export function parseHTML (html, options) {
         }
 
         // Doctype:
+        // 过滤Doctype:
         const doctypeMatch = html.match(doctype)
         if (doctypeMatch) {
           advance(doctypeMatch[0].length)
@@ -104,7 +136,10 @@ export function parseHTML (html, options) {
         }
 
         // Start tag:
+        // 这个函数的大致操作就是读取开始标签中的属性值并用一个数组存起来，然后索引值跳到标签之后，处理完成。
         const startTagMatch = parseStartTag()
+        console.log(startTagMatch,140)
+        
         if (startTagMatch) {
           handleStartTag(startTagMatch)
           if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
@@ -117,6 +152,9 @@ export function parseHTML (html, options) {
       let text, rest, next
       if (textEnd >= 0) {
         rest = html.slice(textEnd)
+        console.log(html,152)
+        console.log(`textEnd=${textEnd}，表示我不是开头，前面有文字之类的东西`,153)
+        // console.log(rest, 154)
         while (
           !endTag.test(rest) &&
           !startTagOpen.test(rest) &&
@@ -175,10 +213,11 @@ export function parseHTML (html, options) {
       break
     }
   }
+  console.log(html,214)
 
   // Clean up any remaining tags
   parseEndTag()
-
+  // 切割html ，去除不必要信息
   function advance (n) {
     index += n
     html = html.substring(n)
@@ -208,7 +247,8 @@ export function parseHTML (html, options) {
       }
     }
   }
-
+//它的大致流程就是先循环遍历match中的属性数组attrs进行格式封装，
+// 接着是if(!unary)对于非单标签元素的话，将他们封装后再入栈，然后是进行执行start操作。
   function handleStartTag (match) {
     const tagName = match.tagName
     const unarySlash = match.unarySlash
@@ -246,18 +286,22 @@ export function parseHTML (html, options) {
       stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs, start: match.start, end: match.end })
       lastTag = tagName
     }
-
+    console.log([...attrs],288)
+    console.log([...stack],289)
     if (options.start) {
       options.start(tagName, attrs, unary, match.start, match.end)
     }
-  }
 
+  }
+  // 结束标签处理
+  // 大致操作就是为结束标签寻找对应的开始标签，进行出栈操作，执行options.end(tagName, start, end)
   function parseEndTag (tagName, start, end) {
     let pos, lowerCasedTagName
     if (start == null) start = index
     if (end == null) end = index
 
     // Find the closest opened tag of the same type
+    // 找出最靠近的同类型标签
     if (tagName) {
       lowerCasedTagName = tagName.toLowerCase()
       for (pos = stack.length - 1; pos >= 0; pos--) {
@@ -283,6 +327,7 @@ export function parseHTML (html, options) {
           )
         }
         if (options.end) {
+          // 重点
           options.end(stack[i].tag, start, end)
         }
       }

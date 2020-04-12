@@ -143,6 +143,7 @@ export function mountComponent (
   el: ?Element,
   hydrating?: boolean
 ): Component {
+  console.log(vm.$options.render,146)
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode

@@ -20,19 +20,24 @@ import {
   pluckModuleFunction,
   getAndRemoveAttrByRegex
 } from '../helpers'
-
+// v-on 绑定
 export const onRE = /^@|^v-on:/
+// 事件绑定
 export const dirRE = process.env.VBIND_PROP_SHORTHAND
   ? /^v-|^@|^:|^\.|^#/
   : /^v-|^@|^:|^#/
+// v-for 中的属性
 export const forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/
+// v-for 中的前部分，如 (item, index)
 export const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/
 const stripParensRE = /^\(|\)$/g
 const dynamicArgRE = /^\[.*\]$/
-
+// : 绑定属性
 const argRE = /:(.*)$/
+// 以:或者v-bind: 开头的属性  
 export const bindRE = /^:|^\.|^v-bind:/
 const propBindRE = /^\./
+// 修饰符
 const modifierRE = /\.[^.\]]+(?=[^\]]*$)/g
 
 const slotRE = /^v-slot(:|$)|^#/
@@ -47,7 +52,7 @@ const decodeHTMLCached = cached(he.decode)
 export const emptySlotScopeToken = `_empty_`
 
 // configurable state
-export let warn: any
+export let warn: any;
 let delimiters
 let transforms
 let preTransforms
@@ -111,6 +116,7 @@ export function parse (
   }
 
   function closeElement (element) {
+    // 如果最后一个子元素是纯文本' '则删除，这是因为我们的模板一般都会缩进，都会有换行，所以这里是清除换行等添加的内容
     trimEndingWhitespace(element)
     if (!inVPre && !element.processed) {
       element = processElement(element, options)
@@ -156,7 +162,6 @@ export function parse (
     element.children = element.children.filter(c => !(c: any).slotScope)
     // remove trailing whitespace node again
     trimEndingWhitespace(element)
-
     // check pre state
     if (element.pre) {
       inVPre = false
@@ -210,6 +215,13 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    // start函数就是慢慢地给这个AST进行装饰，添加更多的属性和标志
+    // 对AST进行预处理
+    // 对vue的指令进行处理v-pre、v-if、v-for、v-once、slot、key、ref
+    // 对根节点进行处理
+    // 元素父子关系的绑定
+    // 将当前AST入栈
+    // 对AST进行后处理
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -295,19 +307,27 @@ export function parse (
       } else {
         closeElement(element)
       }
-    },
+      console.log(tag, 888)
+      console.log([...stack], 123)
 
+    },
+    // 下次出栈
+    // 出栈
     end (tag, start, end) {
+      //  取出stack中的最后一个元素
       const element = stack[stack.length - 1]
-      // pop stack
       stack.length -= 1
       currentParent = stack[stack.length - 1]
       if (process.env.NODE_ENV !== 'production' && options.outputSourceRange) {
         element.end = end
       }
       closeElement(element)
-    },
+      // console.log(tag,999)
 
+    },
+      //chars函数主要是对文本进行解析，分两种情况，
+      // 一种是文本需要解析type = 2，例如栗子中{{msg}}，这就要执行parseText函数，
+      // 一种是纯文本type = 3。看看parseText，在text-parser.js文件中。
     chars (text: string, start: number, end: number) {
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
@@ -395,6 +415,7 @@ export function parse (
         currentParent.children.push(child)
       }
     }
+
   })
   return root
 }

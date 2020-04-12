@@ -9,7 +9,28 @@ import { emptySlotScopeToken } from '../parser/index'
 type TransformFunction = (el: ASTElement, code: string) => string;
 type DataGenFunction = (el: ASTElement) => string;
 type DirectiveFunction = (el: ASTElement, dir: ASTDirective, warn: Function) => boolean;
+/*
+_c createElement方法，创建一个元素，它的第一个参数是要定义的元素标签名、第二个参数是元素上添加的属性，第三个参数是子元素数组，第四个参数是子元素数组进行归一化处理的级别
+_v 本文节点
+_s 需解析的文本，之前在parser阶段已经有所修饰
+_m 渲染静态内容
+_o v-once静态组件
+_l v-for节点
+_e 注释节点
+_t slot节点
+src/core/instance/render-helpers/index.js
+*/
+/*
+transforms我输出了一下是个空数组；
+dataGenFns是对静态类和静态样式的处理，
+directives是对指令的相关操作；
+isReservedTag保留标签标志；
+maybeComponent字面意思不是保留标签就可能是组件；
+onceId使用v-once的递增id；
+staticRenderFns是对静态根节点的处理。
 
+
+*/
 export class CodegenState {
   options: CompilerOptions;
   warn: Function;
@@ -32,6 +53,7 @@ export class CodegenState {
     this.onceId = 0
     this.staticRenderFns = []
     this.pre = false
+    // console.log(this.transforms,56)
   }
 }
 
@@ -45,6 +67,7 @@ export function generate (
   options: CompilerOptions
 ): CodegenResult {
   const state = new CodegenState(options)
+  console.log(state,70)
   const code = ast ? genElement(ast, state) : '_c("div")'
   return {
     render: `with(this){return ${code}}`,
@@ -53,10 +76,11 @@ export function generate (
 }
 
 export function genElement (el: ASTElement, state: CodegenState): string {
+  console.log(el,79)
   if (el.parent) {
     el.pre = el.pre || el.parent.pre
   }
-
+  //如果该节点是个静态子树，我们就执行genStatic对其进行处理。
   if (el.staticRoot && !el.staticProcessed) {
     return genStatic(el, state)
   } else if (el.once && !el.onceProcessed) {
@@ -96,6 +120,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
 }
 
 // hoist static sub-trees out
+//添加staticProcessed属性，插入staticRenderFns子树中，再执行回genElement，返回提取静态子树_m结构的字符串。
 function genStatic (el: ASTElement, state: CodegenState): string {
   el.staticProcessed = true
   // Some elements (templates) need to behave differently inside of a v-pre
@@ -115,6 +140,7 @@ function genStatic (el: ASTElement, state: CodegenState): string {
 }
 
 // v-once
+// 添加onceProcessed属性，里面分了if和for的情况，前者执行genIf，后者向上查找key，找到的话返回静态内容_o结构的字符串，假如两种情况都不是的话则像静态子树一样处理。
 function genOnce (el: ASTElement, state: CodegenState): string {
   el.onceProcessed = true
   if (el.if && !el.ifProcessed) {
@@ -471,6 +497,8 @@ export function genChildren (
   if (children.length) {
     const el: any = children[0]
     // optimize single v-for
+    // 先是对单个v-for子节点进行特别处理，应该是服务端vue方面的优化方案；
+    // 接着是得到对子元素数组进行归一化处理的处理级别getNormalizationType。
     if (children.length === 1 &&
       el.for &&
       el.tag !== 'template' &&
@@ -495,6 +523,11 @@ export function genChildren (
 // 0: no normalization needed
 // 1: simple normalization needed (possible 1-level deep nested array)
 // 2: full normalization needed
+//确定children数组所需的规范化。
+// 0：不需要规范化
+// 1：需要简单规范化（可能的1级深嵌套数组）
+// 2：需要完全标准化
+// 目前只是进行标记而已，具体的处理在vdom部分才实现，所谓的归一化其实就是将多维的子数组转化为一维的，对于不同的子元素进行不同方式的归一化处理。
 function getNormalizationType (
   children: Array<ASTNode>,
   maybeComponent: (el: ASTElement) => boolean
@@ -505,11 +538,15 @@ function getNormalizationType (
     if (el.type !== 1) {
       continue
     }
+     // el上有`v-for`或标签名是`template`或`slot`
+    // 或者el是if块，但块内元素有内容符合上述三个条件的
     if (needsNormalization(el) ||
         (el.ifConditions && el.ifConditions.some(c => needsNormalization(c.block)))) {
       res = 2
       break
     }
+      // el是自定义组件
+    // 或el是if块，但块内元素有自定义组件的
     if (maybeComponent(el) ||
         (el.ifConditions && el.ifConditions.some(c => maybeComponent(c.block)))) {
       res = 1
@@ -521,7 +558,7 @@ function getNormalizationType (
 function needsNormalization (el: ASTElement): boolean {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
-
+//对子节点进行分类处理，假如type === 1即是一棵子树的话则执行genElement；假如是注释的话执行genComment；否则就是文本节点，执行genText。
 function genNode (node: ASTNode, state: CodegenState): string {
   if (node.type === 1) {
     return genElement(node, state)
@@ -531,7 +568,7 @@ function genNode (node: ASTNode, state: CodegenState): string {
     return genText(node)
   }
 }
-
+// 注释节点以_e结构的字符串表示，文本节点以_v结构的字符串拼接，文本节点又分为需要解析的文本，就是parser阶段经过处理的_s字符串，还有就是纯文本节点。
 export function genText (text: ASTText | ASTExpression): string {
   return `_v(${text.type === 2
     ? text.expression // no need for () because already wrapped in _s()
@@ -542,7 +579,7 @@ export function genText (text: ASTText | ASTExpression): string {
 export function genComment (comment: ASTText): string {
   return `_e(${JSON.stringify(comment.text)})`
 }
-
+// 如果该节点是slot，则执行genSlot,返回静态内容_t结构的字符串。
 function genSlot (el: ASTElement, state: CodegenState): string {
   const slotName = el.slotName || '"default"'
   const children = genChildren(el, state)
@@ -579,7 +616,7 @@ function genComponent (
     children ? `,${children}` : ''
   })`
 }
-
+// 也就是遍历数组转化为字符串的形式而已，transformSpecialNewlines是对一些特殊字符的处理
 function genProps (props: Array<ASTAttr>): string {
   let staticProps = ``
   let dynamicProps = ``
@@ -609,7 +646,8 @@ function generateValue (value) {
   }
   return JSON.stringify(value)
 }
-
+// 2028的字符为行分隔符，2029的字符为段落分隔符会
+// 它们被浏览器理解为换行，而在Javascript的字符串表达式中是不允许换行的，从而导致错误
 // #3895, #4268
 function transformSpecialNewlines (text: string): string {
   return text
