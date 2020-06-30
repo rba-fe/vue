@@ -32,17 +32,15 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   options: CompilerOptions
 ): CompiledResult {
   //CompiledResult 看一下这个返回结构 flow
-   // 编译转化为ast
-   console.log(template,789)
+  // 编译转化为ast
   const ast = parse(template.trim(), options)
-  console.log(ast,1000)
     // 优化 ast
+    // 判断动静态节点
   if (options.optimize !== false) {
     optimize(ast, options)
   }
   // ast 生成render
   const code = generate(ast, options)
-  // console.log(code,7890)
   /*
   _c createElement方法，创建一个元素，它的第一个参数是要定义的元素标签名、第二个参数是元素上添加的属性，第三个参数是子元素数组，第四个参数是子元素数组进行归一化处理的级别
   _v 本文节点
@@ -54,7 +52,7 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   _t slot节点
 
   */
- console.log(code.render,55)
+
   return {
     ast,
     render: code.render,

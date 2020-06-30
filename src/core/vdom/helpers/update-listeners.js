@@ -47,6 +47,9 @@ export function createFnInvoker (fns: Function | Array<Function>, vm: ?Component
     }
   }
   invoker.fns = fns
+  /* invoker.fns = () => {
+    console.log(12312)
+  } */
   return invoker
 }
 

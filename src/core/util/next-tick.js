@@ -48,6 +48,11 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     // microtask queue but the queue isn't being flushed, until the browser
     // needs to do some other work, e.g. handle a timer. Therefore we can
     // "force" the microtask queue to be flushed by adding an empty timer.
+    //在有问题的uiwebview中，promise.then不会完全中断，但是
+    //它可能会陷入一种奇怪的状态，在这种状态下，回调被推到
+    //微任务队列，但只有在浏览器
+    //需要做一些其他工作，例如处理计时器。因此我们可以
+    //“强制”通过添加空计时器来刷新微任务队列。
     if (isIOS) setTimeout(noop)
   }
   isUsingMicroTask = true
@@ -74,6 +79,11 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   // Fallback to setImmediate.
   // Techinically it leverages the (macro) task queue,
   // but it is still a better choice than setTimeout.
+  // 目前浏览器不支持
+  // 回退到setImmediate。
+  // 技术上它利用（宏）任务队列，
+  // 但它仍然是比setTimeout更好的选择。
+  // https://www.cnblogs.com/cdwp8/p/4065846.html
   timerFunc = () => {
     setImmediate(flushCallbacks)
   }
@@ -86,6 +96,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  // 加入回调队列
   callbacks.push(() => {
     if (cb) {
       try {
@@ -97,7 +108,9 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  
   if (!pending) {
+    console.log(pending, 784)
     pending = true
     timerFunc()
   }

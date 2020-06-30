@@ -83,7 +83,6 @@ export function parseHTML (html, options) {
   const canBeLeftOpenTag = options.canBeLeftOpenTag || no
   let index = 0
   let last, lastTag
-  console.log(html,86)
   while (html) {
     last = html
     // Make sure we're not in a plaintext content element like script/style
@@ -91,7 +90,6 @@ export function parseHTML (html, options) {
       // < 是不是第一个位置出现的
       let textEnd = html.indexOf('<')
       if (textEnd === 0) {
-        console.log(html,94)
         console.log(`textEnd=${textEnd}，表示我是开头`,95)
         // Comment:
         if (comment.test(html)) {
@@ -138,7 +136,6 @@ export function parseHTML (html, options) {
         // Start tag:
         // 这个函数的大致操作就是读取开始标签中的属性值并用一个数组存起来，然后索引值跳到标签之后，处理完成。
         const startTagMatch = parseStartTag()
-        console.log(startTagMatch,140)
         
         if (startTagMatch) {
           handleStartTag(startTagMatch)
@@ -152,7 +149,6 @@ export function parseHTML (html, options) {
       let text, rest, next
       if (textEnd >= 0) {
         rest = html.slice(textEnd)
-        console.log(html,152)
         console.log(`textEnd=${textEnd}，表示我不是开头，前面有文字之类的东西`,153)
         // console.log(rest, 154)
         while (
@@ -213,7 +209,6 @@ export function parseHTML (html, options) {
       break
     }
   }
-  console.log(html,214)
 
   // Clean up any remaining tags
   parseEndTag()
@@ -286,8 +281,6 @@ export function parseHTML (html, options) {
       stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs, start: match.start, end: match.end })
       lastTag = tagName
     }
-    console.log([...attrs],288)
-    console.log([...stack],289)
     if (options.start) {
       options.start(tagName, attrs, unary, match.start, match.end)
     }

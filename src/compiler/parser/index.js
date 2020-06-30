@@ -114,7 +114,6 @@ export function parse (
       warn(msg, range)
     }
   }
-
   function closeElement (element) {
     // 如果最后一个子元素是纯文本' '则删除，这是因为我们的模板一般都会缩进，都会有换行，所以这里是清除换行等添加的内容
     trimEndingWhitespace(element)
@@ -296,6 +295,7 @@ export function parse (
 
       if (!root) {
         root = element
+        console.log(root, 4561)
         if (process.env.NODE_ENV !== 'production') {
           checkRootConstraints(root)
         }

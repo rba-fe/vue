@@ -65,11 +65,13 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
-      // initial render
+      // 初始化渲染
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
+      console.log(vm.$el, 11153)
     } else {
-      // updates
+      // 更新
       vm.$el = vm.__patch__(prevVnode, vnode)
+      // console.log(document.getElementById('app').innerHTML)
     }
     restoreActiveInstance()
     // update __vue__ reference
@@ -138,12 +140,12 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+// 生成组件
 export function mountComponent (
   vm: Component,
   el: ?Element,
   hydrating?: boolean
 ): Component {
-  console.log(vm.$options.render,146)
   vm.$el = el
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode
@@ -192,9 +194,9 @@ export function mountComponent (
     }
   }
 
-  // we set this to vm._watcher inside the watcher's constructor
-  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
-  // component's mounted hook), which relies on vm._watcher being already defined
+  // 我们在观察者的构造函数中将其设置为vm._watcher
+  // 因为观察者的初始补丁可能会调用$ forceUpdate（例如在孩子内部）
+  // component的挂钩），它依赖于已定义的vm._watcher
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

@@ -122,11 +122,12 @@ function initData (vm: Component) {
       vm
     )
   }
-  // proxy data on instance
+  // 实例上的代理数据
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  // 循环判断命名是否有冲突
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -155,6 +156,7 @@ export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
   pushTarget()
   try {
+    // data不能为箭头函数
     return data.call(vm, vm)
   } catch (e) {
     handleError(e, vm, `data()`)

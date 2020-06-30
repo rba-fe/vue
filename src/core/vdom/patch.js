@@ -144,7 +144,6 @@ export function createPatchFunction (backend) {
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
-
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
@@ -162,7 +161,10 @@ export function createPatchFunction (backend) {
           )
         }
       }
-
+      /** 
+       * style - scope
+       * 为实体dom添加scope属性
+      */
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
         : nodeOps.createElement(tag, vnode)
@@ -420,7 +422,7 @@ export function createPatchFunction (backend) {
     if (process.env.NODE_ENV !== 'production') {
       checkDuplicateKeys(newCh)
     }
-
+    
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
       if (isUndef(oldStartVnode)) {
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
@@ -509,7 +511,6 @@ export function createPatchFunction (backend) {
     if (oldVnode === vnode) {
       return
     }
-
     if (isDef(vnode.elm) && isDef(ownerArray)) {
       // clone reused vnode
       vnode = ownerArray[index] = cloneVNode(vnode)
@@ -702,10 +703,8 @@ export function createPatchFunction (backend) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
     }
-
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true

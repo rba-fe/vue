@@ -10,6 +10,9 @@ type CompiledFunctionResult = {
   staticRenderFns: Array<Function>;
 };
 
+/**
+ * http://www.w3school.com.cn/js/pro_js_functions_function_object.asp
+*/
 function createFunction (code, errors) {
   try {
     return new Function(code)
@@ -91,8 +94,10 @@ export function createCompileToFunctionFn (compile: Function): Function {
     // turn code into functions
     const res = {}
     const fnGenErrors = []
+    /**
+     * 字符串转换为Function
+    */
     res.render = createFunction(compiled.render, fnGenErrors)
-    console.log(res.render,111)
     res.staticRenderFns = compiled.staticRenderFns.map(code => {
       return createFunction(code, fnGenErrors)
     })

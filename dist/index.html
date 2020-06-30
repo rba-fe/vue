@@ -8,31 +8,73 @@
     <script src="./vue.js"></script>
 </head>
 <body>
-  <div id="app">
+  <div id="app" class="appa">
+    
+    <div>
+      <!-- unuuu -->
+      <ul>
+        <li v-for="(item, index) in nameList" :key="index" @click="printFn(item)">{{ item.name + msg }}</li>
+      </ul>
+      <button v-if="msg" @click="clickFn">unshift</button>
+      <transition name="fade">
+          <input type="text" v-model="msg">
+      </transition>
+      <com-text></com-text>
+      <!-- <span>{{ msg }}</span> -->
+    </div>
   </div>
   <script>
-    // <a target="_blank" :href='src'><span>点击进入途家网</span></a>
-  // var demo = new Vue({
-  //     el: '#app',
-  //     template: `
-  //   <div class='div-class'>
-  //       我是最普通的文本
-  //       <p>{{msg}}</p>
-  //       <a target="_blank" :href='src'>点击进入途家网</a>
-  //   </div>`,
-  //     data: {
-  //       msg: 'bilibili',
-  //       src: 'https://www.tujia.com'
-  //     }
-  //   })
-  var demo = new Vue({
+    Vue.component('com-text', {
+      name: 'comText',
+      created () {
+        console.log(12312)
+      },
+      template: '<h1>comText</h1>'
+    })
+    var demo = new Vue({
       el: '#app',
-      template: 
-    `<div class='div-class' ass='s'>我是最普通的文本<p>{{msg}}</p><a target="_blank" :href='src'>点击进入途家网</a></div>`,
-      data: {
-        msg: 'bilibili11',
-        src: 'https://www.tujia.com'
-      }
+      data () {
+        return {
+          msg: '',
+          nameList: [
+            {
+              id: 1,
+              name: '111'
+            },
+            {
+              id: 2,
+              name: '222'
+            }
+          ]
+        }
+      },
+      mixins: [
+        {
+          created: function () {
+
+          }
+      }],
+      methods: {
+        printFn (item) {
+          console.log(item)
+        },
+        clickFn () {
+          /* this.nameList = [
+            {
+              id: 3,
+              name: '333'
+            },
+            {
+              id: 4,
+              name: '4444'
+            }
+          ] */
+          this.nameList = [{ id: 6, name: '6666' }, ...this.nameList]
+        }
+      },
+      mounted () {
+        // this.msg = '22222222222'
+      },
     })
   </script>
 </body>

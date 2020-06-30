@@ -128,6 +128,9 @@ function isStatic (node: ASTNode): boolean {
   if (node.type === 3) { // text
     return true
   }
+  /**
+   * 判断是否为静态节点的核心代码
+  */
   return !!(node.pre || ( //v-pre指令,结点的子内容是不做编译
     !node.hasBindings && // no dynamic bindings // 无动态绑定
     !node.if && !node.for && // not v-if or v-for or v-else 无 v-if or v-for or v-else

@@ -76,9 +76,11 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    // render Wacher
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
+      //$watch
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -103,6 +105,10 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      /**
+       * 关键
+       * 渲染页面在这一步完成
+      */
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -127,6 +133,8 @@ export default class Watcher {
    */
   addDep (dep: Dep) {
     const id = dep.id
+    // 每次视图更新都会调用
+    // 这层判断是阻止在视图更新过程中调用到了defineProperty.get函数,导致重复添加依赖
     if (!this.newDepIds.has(id)) {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
@@ -168,6 +176,7 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
+      console.log('watcher update')
       queueWatcher(this)
     }
   }
@@ -224,6 +233,7 @@ export default class Watcher {
 
   /**
    * Remove self from all dependencies' subscriber list.
+   * 卸载watcher
    */
   teardown () {
     if (this.active) {

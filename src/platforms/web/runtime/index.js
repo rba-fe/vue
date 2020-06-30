@@ -34,10 +34,15 @@ extend(Vue.options.components, platformComponents)
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method
+/**
+ * 最开始的$mount
+ * 入口文件会重写
+ * */ 
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
 ): Component {
+  // 获取容器节点
   el = el && inBrowser ? query(el) : undefined
   return mountComponent(this, el, hydrating)
 }

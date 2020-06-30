@@ -55,6 +55,7 @@ export const isServerRendering = () => {
 export const devtools = inBrowser && window.__VUE_DEVTOOLS_GLOBAL_HOOK__
 
 /* istanbul ignore next */
+// 关于[native code]，这种[native code]是不是JS引擎内部实现的，比如chrome的V8引擎，其内部的回调机制是内部C++代码，而不是真实的JS代码
 export function isNative (Ctor: any): boolean {
   return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
 }

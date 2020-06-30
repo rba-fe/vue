@@ -38,9 +38,8 @@ export default class Dep {
     // stabilize the subscriber list first
     const subs = this.subs.slice()
     if (process.env.NODE_ENV !== 'production' && !config.async) {
-      // subs aren't sorted in scheduler if not running async
-      // we need to sort them now to make sure they fire in correct
-      // order
+      // 如果没有运行异步，则不在scheduler中对subs进行排序
+      // 我们现在需要对它们进行排序，以确保它们正确无误
       subs.sort((a, b) => a.id - b.id)
     }
     for (let i = 0, l = subs.length; i < l; i++) {
@@ -49,9 +48,6 @@ export default class Dep {
   }
 }
 
-// The current target watcher being evaluated.
-// This is globally unique because only one watcher
-// can be evaluated at a time.
 Dep.target = null
 const targetStack = []
 

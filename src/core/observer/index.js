@@ -41,6 +41,7 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // ????
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
@@ -103,9 +104,9 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
 }
 
 /**
- * Attempt to create an observer instance for a value,
- * returns the new observer if successfully observed,
- * or the existing observer if the value already has one.
+ * 尝试为值创建观察者实例，
+ * 如果成功观察，则返回新观察者，
+ * 或现有观察者，如果价值已经有一个
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
@@ -140,8 +141,9 @@ export function defineReactive (
   shallow?: boolean
 ) {
   const dep = new Dep()
-
+  // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
   const property = Object.getOwnPropertyDescriptor(obj, key)
+  // 判断是否可修改
   if (property && property.configurable === false) {
     return
   }
@@ -149,10 +151,11 @@ export function defineReactive (
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
+  // 如果val没有值，则通过key获取val
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
+  // 递归监听数据
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
